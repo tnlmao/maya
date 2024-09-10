@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -220,7 +221,8 @@ func (m *MayaService) GetDiaryEntries(ctx context.Context, uid *dom.Uid) (respon
 func (m *MayaService) GetRecipe(ctx context.Context, ingredients []string, cuisine string, dietaryPreference string) (response dom.MayaResponse) {
 	//ctx := context.Background()
 	// Access your API key as an environment variable (see "Set up your API key" above)
-	client, err := genai.NewClient(ctx, option.WithAPIKey("AIzaSyBPLQiA_dOPH1Zecn-X5TzIPdUL7AAVW6o"))
+	key := os.Getenv("API_KEY")
+	client, err := genai.NewClient(ctx, option.WithAPIKey(key))
 	if err != nil {
 		log.Fatal(err)
 	}
