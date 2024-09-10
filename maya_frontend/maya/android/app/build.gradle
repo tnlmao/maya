@@ -1,0 +1,115 @@
+// plugins {
+//     id "com.android.application"
+//     id "kotlin-android"
+//     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+//     id "dev.flutter.flutter-gradle-plugin"
+// }
+// plugins {
+//   // Add the Google services Gradle plugin
+//   id 'com.google.gms.google-services'
+
+// }
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'dev.flutter.flutter-gradle-plugin'
+apply plugin: 'com.google.gms.google-services'
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader("UTF-8") { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty("flutter.versionCode")
+if (flutterVersionCode == null) {
+    flutterVersionCode = "1"
+}
+
+def flutterVersionName = localProperties.getProperty("flutter.versionName")
+if (flutterVersionName == null) {
+    flutterVersionName = "1.0"
+}
+def keystorePropertiesFile = rootProject.file('key.properties')
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+android {
+    namespace = "com.example.maya"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId = "com.example.maya"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
+        minSdk = 29
+        targetSdk = 34
+        versionCode = flutterVersionCode.toInteger()
+        versionName = flutterVersionName
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+    // signingConfigs {
+    //     release {
+    //         keyAlias 'keyAlias'
+    //         keyPassword 'Tulsidas@44'
+    //         storeFile file('/home/user/my-release-key.jks')
+    //         storePassword 'Tulsidas@44'
+    //     }
+    // }
+    buildTypes {
+        debug{
+            signingConfig = signingConfigs.debug
+            minifyEnabled true
+            shrinkResources true
+        }
+        // release {
+        //     // TODO: Add your own signing config for the release build.
+        //     // Signing with the debug keys for now, so `flutter run --release` works.
+        //    // signingConfig = signingConfigs.debug
+        //     signingConfig signingConfigs.release
+        //     minifyEnabled true
+        //     shrinkResources true
+        //     //add this line to avoid kotlin error
+        //     multiDeexEnabled true
+        //     // Other config options
+        // }
+    }
+//     android {
+//     lintOptions {
+//         baseline file("lint-baseline.xml")
+//     }
+// }
+lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+}
+
+flutter {
+    source = "../.."
+}
+
+
+dependencies {
+  // Import the Firebase BoM
+  implementation platform('com.google.firebase:firebase-bom:33.1.1')
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+  // TODO: Add the dependencies for Firebase products you want to use
+  // When using the BoM, don't specify versions in Firebase dependencies
+  implementation 'com.google.firebase:firebase-analytics'
+  implementation 'com.google.firebase:firebase-auth:23.0.0'  // Adjust version as needed
+  //implementation 'com.google.firebase:firebase-core:3.1.1'  // Ensure compatibility with firebase_auth
+  // Add the dependencies for any other desired Firebase products
+  // https://firebase.google.com/docs/android/setup#available-libraries
+}
