@@ -30,21 +30,21 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  google_sign_in: ^6.2.1
+  google_sign_in: ^6.2.1 #a
   # firebase_core: ^3.1.1R
-  firebase_auth: ^5.1.1
-  firebase_analytics: ^11.1.0
-  http: ^1.2.1
-  shared_preferences: ^2.2.3
-  csv: ^6.0.0
-  fl_chart: ^0.68.0
-  video_player: ^2.8.6
-  intl: ^0.19.0
-  flutter_colorpicker: ^1.1.0
-  flutter_quill: ^10.0.0
-  loading_animation_widget: ^1.2.1
-  url_launcher: ^6.3.0
-  device_info_plus: ^10.1.0
+  firebase_auth: ^5.1.1 #a
+  #firebase_analytics: ^11.1.0 
+  http: ^1.2.1 #a
+  shared_preferences: ^2.2.3 #a
+  csv: ^6.0.0 #a
+  fl_chart: ^0.68.0 #a
+  video_player: ^2.8.6 #a
+  intl: ^0.19.0 #a
+  #flutter_colorpicker: ^1.1.0
+  flutter_quill: ^10.0.0 #a
+  loading_animation_widget: ^1.2.1 #a
+  url_launcher: ^6.3.0 #a
+  #device_info_plus: ^10.1.0
 
 
   # The following adds the Cupertino Icons font to your application.

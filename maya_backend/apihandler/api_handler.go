@@ -3,19 +3,24 @@ package apihandler
 import (
 	"github.com/gin-gonic/gin"
 	"maya.com/apihandler/handler"
+	"maya.com/core/config"
+	"maya.com/core/persistence/mayapersistence"
 	"maya.com/core/service/logic"
+	"maya.com/middleware"
 )
 
 func SetupRoutes(engine *gin.Engine) {
+	mayaPersistence := mayapersistence.MayaPersistence("mysql")
+	mayaSvc := logic.MayaServiceSvc(mayaPersistence)
 
-	mayaSvc := logic.MayaServiceSvc()
-
-	engine.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		c.Next()
-	})
+	// engine.Use(func(c *gin.Context) {
+	// 	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+	// 	c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	// 	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	// 	c.Next()
+	// })
+	router := engine.Group(config.GetApiStageName())
+	router.Use(middleware.DBConnectionMiddleware)
 	//Test Route
 	engine.GET("/default/hello", handler.Hello(mayaSvc))
 

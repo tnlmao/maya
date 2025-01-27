@@ -43,7 +43,7 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> {
 
   Future<void> _loadIngredientsFromCSV() async {
     try {
-      final String fileName = 'ingredients.csv';
+      const String fileName = 'ingredients.csv';
       final String pathToFile = path.join('lib', 'utils', fileName);
 
       String csvString = await rootBundle.loadString(pathToFile);
@@ -61,6 +61,13 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> {
             name: row[ingredientNameIndex].toString(),
             amount: 0,
             code: row[ingredientNameIndex - 1].toString(),
+            protein: _parseToDouble(row[ingredientNameIndex + 1]),  // protein
+            carbs: _parseToDouble(row[ingredientNameIndex + 2]),  // carbs
+            fats: _parseToDouble(row[ingredientNameIndex + 3]),   // fats
+            minerals: _parseToDouble(row[ingredientNameIndex + 4]),  // minerals
+            fibre: _parseToDouble(row[ingredientNameIndex + 5]),   // fibre
+            calories: _parseToDouble(row[ingredientNameIndex + 6]),  // calories
+           
           );
         }).toList();
       });
@@ -73,7 +80,7 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> {
     final amount = double.tryParse(_amountController.text);
     if (amount != null) {
       setState(() {
-        _ingredients.add(Ingredient(name: ingredient.name, amount: amount, code: ingredient.code));
+        _ingredients.add(Ingredient(name: ingredient.name, amount: amount, code: ingredient.code, calories: ingredient.calories, protein: ingredient.protein, carbs: ingredient.carbs, fats: ingredient.fats, minerals: ingredient.minerals, fibre: ingredient.fibre));
       });
       _ingredientController.clear();
       _amountController.clear();
@@ -87,47 +94,65 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> {
     });
   }
 
-Future<DietSummary> _calculateDietSummary() async {
-  return Future.delayed(const Duration(seconds: 2), () async {
-    List<Map<String, dynamic>> ingredientsData = _ingredients.map((ingredient) {
-      return {
-        'name': ingredient.name,
-        'amount': ingredient.amount,
-        'code': ingredient.code,
-      };
-    }).toList();
+// Future<DietSummary> _calculateDietSummary() async {
+//   return Future.delayed(const Duration(seconds: 2), () async {
+//     List<Map<String, dynamic>> ingredientsData = _ingredients.map((ingredient) {
+//       return {
+//         'name': ingredient.name,
+//         'amount': ingredient.amount,
+//         'code': ingredient.code,
+//       };
+//     }).toList();
 
-    try {
-      final response = await http.post(
-        Uri.parse("REDACTEDcalorie"),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(ingredientsData),
-      );
+//     try {
+//       final response = await http.post(
+//         Uri.parse("REDACTEDcalorie"),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json; charset=UTF-8',
+//         },
+//         body: jsonEncode(ingredientsData),
+//       );
 
-      if (response.statusCode == 200) {
-        Map<String, dynamic> responseBody = jsonDecode(response.body);
-        if (responseBody.containsKey('model')) {
-          Map<String, dynamic> model = responseBody['model'];
-          DietSummary dietSummary = DietSummary.fromJson(model);
-          dietSummary.ingredients = _ingredients.map((ingredient) => ingredient.name).toList();
-          return dietSummary;
-        }
-      } else {
-        print('Failed to fetch data. Error ${response.statusCode}');
-        return DietSummary(calories: 0, protein: 0, carbs: 0, fats: 0, minerals: 0, fibre: 0);
-      }
-    } catch (e) {
-      print('Error sending data: $e');
-      // Return a default DietSummary or handle the error as needed
-      return DietSummary(calories: 0, protein: 0, carbs: 0, fats: 0, minerals: 0, fibre: 0);
-    }
-    return DietSummary(calories: 0, protein: 0, carbs: 0, fats: 0, minerals: 0, fibre: 0);
-  });
+//       if (response.statusCode == 200) {
+//         Map<String, dynamic> responseBody = jsonDecode(response.body);
+//         if (responseBody.containsKey('model')) {
+//           Map<String, dynamic> model = responseBody['model'];
+//           DietSummary dietSummary = DietSummary.fromJson(model);
+//           dietSummary.ingredients = _ingredients.map((ingredient) => ingredient.name).toList();
+//           return dietSummary;
+//         }
+//       } else {
+//         print('Failed to fetch data. Error ${response.statusCode}');
+//         return DietSummary(calories: 0, protein: 0, carbs: 0, fats: 0, minerals: 0, fibre: 0);
+//       }
+//     } catch (e) {
+//       print('Error sending data: $e');
+//       // Return a default DietSummary or handle the error as needed
+//       return DietSummary(calories: 0, protein: 0, carbs: 0, fats: 0, minerals: 0, fibre: 0);
+//     }
+//     return DietSummary(calories: 0, protein: 0, carbs: 0, fats: 0, minerals: 0, fibre: 0);
+//   });
+// }
+DietSummary calculateTotalMacros() {
+  double totalCalories = 0;
+  double totalProtein = 0;
+  double totalCarbs = 0;
+  double totalFats = 0;
+  double totalMinerals = 0;
+  double totalFibre = 0;
+
+  for (var ingredient in _ingredients) {
+    totalCalories += ingredient.calories;
+    totalProtein += ingredient.protein;
+    totalCarbs += ingredient.carbs;
+    totalFats += ingredient.fats;
+    totalMinerals += ingredient.minerals;
+    totalFibre += ingredient.fibre;
+  }
+  return DietSummary(calories:totalCalories , protein: totalProtein, carbs: totalCarbs, fats: totalFats, minerals: totalMinerals, fibre: totalFibre);
 }
 
-  Future<void> _storeDietSummary(DietSummary summary,String uid) async {
+Future<void> _storeDietSummary(DietSummary summary,String uid) async {
       try {
         final Map<String, dynamic> requestBody = summary.toJson();
         requestBody['uid'] = uid;
@@ -230,7 +255,7 @@ Future<DietSummary> _calculateDietSummary() async {
                   onPressed: () {
                     final selectedIngredient = _allIngredients.firstWhere(
                       (ingredient) => ingredient.name == _ingredientController.text,
-                      orElse: () => Ingredient(name: _ingredientController.text, amount: 0, code: ''),
+                      orElse: () => Ingredient(name: _ingredientController.text, amount: 0, code: '', calories: 0, protein: 0, carbs: 0, fats: 0, minerals: 0, fibre: 0),
                     );
                     _addIngredient(selectedIngredient);
                   },
@@ -260,7 +285,7 @@ Future<DietSummary> _calculateDietSummary() async {
             ),
             ElevatedButton(
               onPressed: () async {
-                final summary = await _calculateDietSummary();
+                final summary = await calculateTotalMacros();
                 final bool shouldStore = await showDialog(
                   context: context,
                   builder: (context) {
@@ -287,12 +312,12 @@ Future<DietSummary> _calculateDietSummary() async {
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _buildSummaryRow('Calories', '${summary.calories} kcal'),
-                                _buildSummaryRow('Protein', '${summary.protein} g'),
-                                _buildSummaryRow('Carbs', '${summary.carbs} g'),
-                                _buildSummaryRow('Fats', '${summary.fats} g'),
-                                _buildSummaryRow('Minerals', '${summary.minerals} g'),
-                                _buildSummaryRow('Fibre', '${summary.fibre} g'),
+                               _buildSummaryRow('Calories', '${summary.calories} kcal'),
+                              _buildSummaryRow('Protein', '${summary.protein} g'),
+                              _buildSummaryRow('Carbs', '${summary.carbs} g'),
+                              _buildSummaryRow('Fats', '${summary.fats} g'),
+                              _buildSummaryRow('Minerals', '${summary.minerals} g'),
+                              _buildSummaryRow('Fibre', '${summary.fibre} g'),
                               ],
                             ),
                           ),
@@ -366,17 +391,23 @@ class Ingredient {
   final String name;
   final double amount;
   final String code;
+  final double calories;
+  final double protein;
+  final double carbs;
+  final double fats;
+  final double minerals;
+  final double fibre;
 
-  Ingredient({required this.name, required this.amount, required this.code});
+  Ingredient( {required this.name, required this.amount, required this.code,required this.calories, required this.protein, required this.carbs, required this.fats, required this.minerals, required this.fibre});
 }
 
 class DietSummary {
-  final int? calories;
-  final int? protein;
-  final int? carbs;
-  final int? fats;
-  final int? minerals;
-  final int? fibre;
+  final double? calories;
+  final double? protein;
+  final double? carbs;
+  final double? fats;
+  final double? minerals;
+  final double? fibre;
   List<String>? ingredients;
 
   DietSummary({
@@ -473,4 +504,15 @@ Widget _buildSummaryRow(String label, String value) {
       ],
     ),
   );
+}
+double _parseToDouble(dynamic value) {
+  if (value is String) {
+    return double.tryParse(value) ?? 0.0;  // Parse string to double, default to 0.0 if parsing fails
+  } else if (value is int) {
+    return value.toDouble();  // Convert int to double
+  } else if (value is double) {
+    return value;  // Return double as is
+  } else {
+    return 0.0;  // Default to 0.0 for unexpected types
+  }
 }

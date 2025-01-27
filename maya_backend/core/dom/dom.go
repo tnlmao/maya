@@ -3,13 +3,14 @@ package dom
 import "time"
 
 type User struct {
-	UID         string `json:"uid,omitempty" gorm:"column:uid"`
-	Email       string `json:"email" gorm:"column:email"`
-	DisplayName string `json:"displayName,omitempty" gorm:"column:name"`
-	PhotoURL    string `json:"photoURL,omitempty" gorm:"column:photoURL"`
-	AccessToken string `json:"accessToken,omitempty" gorm:"column:accessToken"`
-	IdToken     string `json:"idToken,omitempty" gorm:"column:idToken"`
-	Password    string `json:"password,omitempty" gorm:"column:password"`
+	UID         string `json:"uid,omitempty"`
+	Email       string `json:"email"`
+	FirstName   string `json:"firstname,omitempty"`
+	LastName    string `json:"lastname,omitempty"`
+	PhotoURL    string `json:"photourl,omitempty"`
+	AccessToken string `json:"accesstoken,omitempty"`
+	IdToken     string `json:"idtoken,omitempty"`
+	Password    string `json:"password,omitempty"`
 }
 type DietSummary struct {
 	Calories    int      `json:"calories"`

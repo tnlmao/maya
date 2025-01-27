@@ -3,15 +3,15 @@ package app
 import (
 	"context"
 	"encoding/json"
-	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
+	"github.com/beego/beego/v2/client/orm"
 	"github.com/gin-gonic/gin"
+	"maya.com/core/config"
 	"maya.com/logger"
 	constants "maya.com/utils/constants"
-	"maya.com/utils/db"
 )
 
 type App struct {
@@ -32,10 +32,11 @@ func New(appName string) *App {
 	}
 }
 func (a *App) Init() {
-	dsn, _ := os.LookupEnv(constants.DSN)
-	if err := db.InitializeDB(dsn); err != nil {
-		logger.E(constants.DBConnectivityError, err)
-	}
+	config.SetEnv()
+	// if err := db.DBInit(); err != nil {
+	// 	logger.E(constants.DBConnectivityError, err)
+	// 	panic(err)
+	// }
 }
 func (a *App) StartHandler() {
 	lambda.Start(a.Handler)
@@ -53,4 +54,11 @@ func (a *App) Handler(ctx context.Context, input map[string]interface{}) (interf
 		return ginLambda.ProxyWithContext(ctx, awsEvent)
 	}
 	return constants.InvalidRequest, err
+}
+func (a *App) PostOp() {
+	inst, err := orm.GetDB(config.GetConfig(constants.Alias))
+	if err != nil {
+		return
+	}
+	inst.Close()
 }
