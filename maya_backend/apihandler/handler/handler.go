@@ -18,6 +18,7 @@ import (
 func Hello(mayadriver driver.MayaServiceDriver) gin.HandlerFunc {
 
 	logger.I(constants.Inside + logger.FuncName())
+
 	var exeCtx context.Context
 	return func(c *gin.Context) {
 		exeCtx = context.Background()

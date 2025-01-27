@@ -15,6 +15,7 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/api/option"
 	"maya.com/core/dom"
+	dbdriver "maya.com/core/persistence/driver"
 	"maya.com/core/service/driver"
 	"maya.com/logger"
 	"maya.com/utils/constants"
@@ -22,10 +23,13 @@ import (
 )
 
 type MayaService struct {
+	mayaPersistence *dbdriver.MayaPersistence
 }
 
-func MayaServiceSvc() driver.MayaServiceDriver {
-	return &MayaService{}
+func MayaServiceSvc(mayaPersistence *dbdriver.MayaPersistence) driver.MayaServiceDriver {
+	return &MayaService{
+		mayaPersistence: mayaPersistence,
+	}
 }
 func (m *MayaService) Hello(ctx context.Context) dom.MayaResponse {
 
@@ -35,18 +39,10 @@ func (m *MayaService) Hello(ctx context.Context) dom.MayaResponse {
 	}
 }
 func (m *MayaService) Login(ctx context.Context, user *dom.User) (response dom.MayaResponse) {
-	db := db.GetDB()
-	// Check if the user already exists
-	if result := db.First(&user, "email = ?", user.Email); result.Error == nil {
-		logger.I("User Already Registered")
-		return
-	}
-	// User Creation
-	result := db.Create(&user)
-	if result.Error != nil {
-		logger.I("Error while inserting user")
-		response.Code = http.StatusInternalServerError
-		response.Msg = result.Error.Error()
+
+	err := m.mayaPersistence.UserPersistence.CreateUser(user)
+	if err != nil {
+		logger.E("Error Creating User || ", err)
 	}
 	response.Code = 200
 	response.Msg = "true"
