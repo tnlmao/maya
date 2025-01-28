@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:maya/services/auth_service.dart';
+import 'package:maya/services/config_service.dart';
 
 class TodoListScreen extends StatefulWidget {
   const TodoListScreen({super.key});
@@ -24,7 +25,7 @@ final TextEditingController _editController = TextEditingController();
 
   Future<void> _fetchTodos() async {
     final uid = await AuthService().getCurrentUserUid();
-    final response = await http.get(Uri.parse('REDACTEDgettodos?uid=$uid'));
+    final response = await http.get(Uri.parse('${Config.lambdaUrl}gettodos?uid=$uid'));
 
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
@@ -43,7 +44,7 @@ final TextEditingController _editController = TextEditingController();
     }
     
     final response = await http.post(
-      Uri.parse('REDACTEDcreatetodo'),
+      Uri.parse('${Config.lambdaUrl}createtodo'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'uid': uid, 'text': _addController.text}),
     );
@@ -61,7 +62,7 @@ final TextEditingController _editController = TextEditingController();
   Future<void> _deleteTodo(int id) async {
     final uid = await AuthService().getCurrentUserUid();
     final response = await http.delete(
-      Uri.parse('REDACTEDdeletetodos'),
+      Uri.parse('${Config.lambdaUrl}deletetodos'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'uid': uid, 'id': id}),
     );
@@ -81,7 +82,7 @@ final TextEditingController _editController = TextEditingController();
 
     final uid = await AuthService().getCurrentUserUid();
     final response = await http.put(
-      Uri.parse('REDACTEDupdatetodo'),
+      Uri.parse('${Config.lambdaUrl}updatetodo'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'uid': uid, 'id': _editingTodoId, 'text': _editController.text}),
     );

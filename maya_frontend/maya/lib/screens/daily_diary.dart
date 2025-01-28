@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:maya/main.dart';
 import 'package:maya/services/auth_service.dart';
+import 'package:maya/services/config_service.dart';
 
 class DailyDiaryScreen extends StatefulWidget {
   const DailyDiaryScreen({Key? key}) : super(key: key);
@@ -28,7 +29,7 @@ class _DailyDiaryScreenState extends State<DailyDiaryScreen> {
 
   void _addEntry(String entry, String title) async {
 
-    String apiUrl = 'REDACTEDsavediaryentry';
+    String apiUrl = '${Config.lambdaUrl}savediaryentry';
 
     Map<String, dynamic> postData = {
       'uid': user?.uid,
@@ -58,7 +59,7 @@ class _DailyDiaryScreenState extends State<DailyDiaryScreen> {
  
   Future<void> _fetchEntries() async {
     final uid = await AuthService().getCurrentUserUid();
-    String apiUrl = 'REDACTEDgetdiaryentries?uid=$uid';
+    String apiUrl = '${Config.lambdaUrl}getdiaryentries?uid=$uid';
 
     try {
       var response = await http.get(Uri.parse(apiUrl));

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:maya/main.dart';
+import 'package:maya/services/config_service.dart';
 
 class DietStatisticsScreen extends StatefulWidget {
   const DietStatisticsScreen({Key? key}) : super(key: key);
@@ -78,7 +79,7 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
 
     final String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
 
-    final url = Uri.parse('REDACTEDgetdietdetails');
+    final url = Uri.parse("${Config.lambdaUrl}getdietdetails");
 
     final Map<String, dynamic> requestBody = {
       'uid': user?.uid, 

@@ -2,23 +2,26 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:maya/screens/daily_diary.dart';
 import 'package:maya/screens/health.dart';
 import 'package:maya/screens/home_screen.dart';
 import 'package:maya/screens/lists_home.dart';
 import 'package:maya/screens/login_screen.dart';
 import 'package:maya/screens/more.dart';
+import 'package:maya/services/config_service.dart';
 import 'package:video_player/video_player.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   try {
     await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "${Config.apiKey}",
-        appId: "${Config.appId}",
-        messagingSenderId: "${Config.messagingSenderId}",
-        projectId: "${Config.projectId}"
+      options: FirebaseOptions(
+        apiKey: Config.apiKey,
+        appId: Config.appId,
+        messagingSenderId: Config.messagingSenderId,
+        projectId: Config.projectId
       )
     );
   } catch (e) {

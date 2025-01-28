@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:maya/services/config_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NewsPage extends StatefulWidget {
@@ -23,7 +24,7 @@ class _NewsPageState extends State<NewsPage> {
 
   Future<void> _fetchCategoriesAndNews() async {
     try {
-      final url = Uri.parse('REDACTEDgetnews');
+      final url = Uri.parse('${Config.lambdaUrl}getnews');
       final body = jsonEncode({
         'category': _selectedCategories,
       });
@@ -64,7 +65,7 @@ class _NewsPageState extends State<NewsPage> {
     });
  
     try {
-      final url = Uri.parse('REDACTEDgetnews');
+      final url = Uri.parse('${Config.lambdaUrl}getnews');
       final body = jsonEncode({
         'category': _selectedCategories,
       });

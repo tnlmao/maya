@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:maya/services/config_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
@@ -38,7 +39,7 @@ class AuthService {
   Future<void> sendUserCredentialsToBackend(User? user, String? idToken,String? accessToken) async {
     if (user != null && idToken != null) {
       // Replace with your backend endpoint
-      final String backendUrl = 'REDACTEDlogin';
+      final String backendUrl = '${Config.lambdaUrl}login';
       final response = await http.post(
         Uri.parse(backendUrl),
         headers: {'Content-Type': 'application/json'},
@@ -61,7 +62,7 @@ class AuthService {
   Future<void> sendUserCredentialsToBackendEP(String email ,String password,String uid ) async {
     if (email != "" && password != "") {
       // Replace with your backend endpoint
-      const String backendUrl = 'REDACTEDlogin';
+      String backendUrl = '${Config.lambdaUrl}login';
       final response = await http.post(
         Uri.parse(backendUrl),
         headers: {'Content-Type': 'application/json'},

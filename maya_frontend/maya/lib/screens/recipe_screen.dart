@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:maya/screens/recipe_viewer.dart';
+import 'package:maya/services/config_service.dart';
 
 class RecipeScreen extends StatefulWidget {
   const RecipeScreen({super.key});
@@ -134,7 +135,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
       _isLoading = true;
     });
 
-    final url = Uri.parse('REDACTEDgetrecipe');
+    final url = Uri.parse('${Config.lambdaUrl}getrecipe');
     final body = jsonEncode({
       'ingredients': _ingredients,
       'dietaryPreference': _dietaryPreference,

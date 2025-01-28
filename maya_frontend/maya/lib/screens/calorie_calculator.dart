@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:maya/screens/diet_statistics.dart';
 import 'package:maya/services/auth_service.dart';
+import 'package:maya/services/config_service.dart';
 import 'package:path/path.dart' as path;
 
 void main() {
@@ -106,7 +107,7 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> {
 
 //     try {
 //       final response = await http.post(
-//         Uri.parse("REDACTEDcalorie"),
+//         Uri.parse("${Config.lambdaUrl}calorie"),
 //         headers: <String, String>{
 //           'Content-Type': 'application/json; charset=UTF-8',
 //         },
@@ -158,7 +159,7 @@ Future<void> _storeDietSummary(DietSummary summary,String uid) async {
         requestBody['uid'] = uid;
         print(jsonEncode(requestBody));
         final response = await http.post(
-          Uri.parse("REDACTEDstoredietsummary"), // Replace with your actual URL
+          Uri.parse("${Config.lambdaUrl}storedietsummary"), // Replace with your actual URL
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
